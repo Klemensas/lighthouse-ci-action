@@ -78,14 +78,18 @@ async function main() {
           `--token=${input.serverToken}`,
           '--ignoreDuplicateBuildFailure' // ignore failure on the same commit rerun
         )
-      } else if (input.basicAuthPassword) {
+      } else if (input.temporaryPublicStorage) {
+        uploadParams.push('--target=temporary-public-storage')
+      }
+
+      if (input.basicAuthPassword) {
         uploadParams.push(
           `--basicAuth.username=${input.basicAuthUsername}`,
           `--basicAuth.password=${input.basicAuthPassword}`,
         )
-      } else if (input.temporaryPublicStorage) {
-        uploadParams.push('--target=temporary-public-storage')
       }
+      
+      core.info(`uploadParams: ${JSON.stringify(uploadParams, null, '  ')}`)
 
       const uploadStatus = runChildCommand('upload', uploadParams)
       if (uploadStatus !== 0) throw new Error(`LHCI 'upload' failed to upload to LHCI server.`)
